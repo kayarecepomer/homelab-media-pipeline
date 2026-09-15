@@ -1,0 +1,9 @@
+# Copy this file to letterboxd-radarr.conf and fill in your own values.
+# Never commit the real file — it contains your Radarr API key.
+
+LIST_URL=https://letterboxd.com/<your-username>/list/<your-list-slug>/
+FLARESOLVERR_URL=http://localhost:8191/v1
+RADARR_URL=http://localhost:7878
+RADARR_API_KEY=<from Radarr: Settings -> General -> Security -> API Key>
+ROOT_FOLDER=/data/media/movies
+QUALITY_PROFILE_ID=1

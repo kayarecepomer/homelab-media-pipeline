@@ -1,0 +1,14 @@
+compose.yml
+.env
+*.conf
+!*.conf.example
+*.seen.json
+*.log
+gluetun/
+qbittorrent/
+prowlarr/
+sonarr/
+radarr/
+bazarr/
+jellyseerr/
+jellyfin/
