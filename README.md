@@ -22,15 +22,6 @@ doesn't expose the RSS feed you'd expect.
 
 ## What it does
 
-<p align="center">
-  <img src="https://cdn.simpleicons.org/letterboxd/00E054" width="42" title="Letterboxd" alt="Letterboxd" />
-  &nbsp;&nbsp;→&nbsp;&nbsp;
-  <img src="https://cdn.simpleicons.org/radarr/FFC230" width="42" title="Radarr" alt="Radarr" />
-  &nbsp;&nbsp;→&nbsp;&nbsp;
-  <img src="https://cdn.simpleicons.org/qbittorrent/2F67BA" width="42" title="qBittorrent" alt="qBittorrent" />
-  &nbsp;&nbsp;→&nbsp;&nbsp;
-  <img src="https://cdn.simpleicons.org/jellyfin/00A4DC" width="42" title="Jellyfin" alt="Jellyfin" />
-</p>
 
 ```mermaid
 flowchart LR
