@@ -1,5 +1,15 @@
 # Homelab Automated Media Pipeline
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Letterboxd-00E054?style=for-the-badge&logo=letterboxd&logoColor=white" alt="Letterboxd" />
+  <img src="https://img.shields.io/badge/Radarr-FFC230?style=for-the-badge&logo=radarr&logoColor=black" alt="Radarr" />
+  <img src="https://img.shields.io/badge/Sonarr-35C5F4?style=for-the-badge&logo=sonarr&logoColor=white" alt="Sonarr" />
+  <img src="https://img.shields.io/badge/qBittorrent-2F67BA?style=for-the-badge&logo=qbittorrent&logoColor=white" alt="qBittorrent" />
+  <img src="https://img.shields.io/badge/Jellyfin-00A4DC?style=for-the-badge&logo=jellyfin&logoColor=white" alt="Jellyfin" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/WireGuard-88171A?style=for-the-badge&logo=wireguard&logoColor=white" alt="WireGuard" />
+</p>
+
 A self-hosted media server built on a single repurposed desktop PC, with a
 fully automated pipeline that goes from *"add a movie to a public watchlist"*
 to *"it's playable in my media library"* — no manual searching required.
@@ -11,6 +21,16 @@ pipeline, bypassing the fact that Letterboxd sits behind Cloudflare and
 doesn't expose the RSS feed you'd expect.
 
 ## What it does
+
+<p align="center">
+  <img src="https://cdn.simpleicons.org/letterboxd/00E054" width="42" title="Letterboxd" alt="Letterboxd" />
+  &nbsp;&nbsp;→&nbsp;&nbsp;
+  <img src="https://cdn.simpleicons.org/radarr/FFC230" width="42" title="Radarr" alt="Radarr" />
+  &nbsp;&nbsp;→&nbsp;&nbsp;
+  <img src="https://cdn.simpleicons.org/qbittorrent/2F67BA" width="42" title="qBittorrent" alt="qBittorrent" />
+  &nbsp;&nbsp;→&nbsp;&nbsp;
+  <img src="https://cdn.simpleicons.org/jellyfin/00A4DC" width="42" title="Jellyfin" alt="Jellyfin" />
+</p>
 
 ```mermaid
 flowchart LR
@@ -44,16 +64,16 @@ Architecture](docs/network-architecture.md)).
 | Layer | Tool | Role |
 |---|---|---|
 | Reverse-mesh access | Tailscale | Private remote access to every service, no port forwarding |
-| Egress privacy | Gluetun + WireGuard | VPN-tunnels only the torrent client, structurally (not a monitored "kill switch") |
+| Egress privacy | <img src="https://cdn.simpleicons.org/wireguard/88171A" width="16" valign="middle" /> Gluetun + WireGuard | VPN-tunnels only the torrent client, structurally (not a monitored "kill switch") |
 | Indexer aggregation | Prowlarr | One indexer config shared by Sonarr/Radarr |
-| Acquisition | Sonarr, Radarr | TV/movie search, matching, and library management |
-| Download | qBittorrent | Runs inside the VPN tunnel's network namespace |
+| Acquisition | <img src="https://cdn.simpleicons.org/sonarr/35C5F4" width="16" valign="middle" /> Sonarr, <img src="https://cdn.simpleicons.org/radarr/FFC230" width="16" valign="middle" /> Radarr | TV/movie search, matching, and library management |
+| Download | <img src="https://cdn.simpleicons.org/qbittorrent/2F67BA" width="16" valign="middle" /> qBittorrent | Runs inside the VPN tunnel's network namespace |
 | Cloudflare bypass | FlareSolverr | Headless-browser proxy for indexers (and, here, for Letterboxd) |
 | Subtitles | Bazarr | Automatic subtitle fetching |
 | Requests | Jellyseerr | Manual request intake for anyone else with access |
-| Playback | Jellyfin | Media server and client apps |
+| Playback | <img src="https://cdn.simpleicons.org/jellyfin/00A4DC" width="16" valign="middle" /> Jellyfin | Media server and client apps |
 | Photo library | Immich | Self-hosted photo/video backup with ML-based search and albums |
-| **List automation** | **custom script** (this repo) | Watches a public Letterboxd list, adds new films to Radarr |
+| **List automation** | <img src="https://cdn.simpleicons.org/letterboxd/00E054" width="16" valign="middle" /> **custom script** (this repo) | Watches a public Letterboxd list, adds new films to Radarr |
 
 ## Docs
 
