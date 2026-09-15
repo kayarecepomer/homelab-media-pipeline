@@ -59,6 +59,55 @@ the torrent client, and it's tunneled through a commercial VPN with **no
 fallback path** if the tunnel drops (see [Network & Security
 Architecture](docs/network-architecture.md)).
 
+## Architecture highlights
+
+### Bypassing Cloudflare to read a Letterboxd list
+
+Letterboxd sits behind Cloudflare's bot protection, and its list-level RSS
+feed no longer works at all — so the sync script fetches the rendered page
+through [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) (a
+headless-Chromium proxy already running in this stack for a Cloudflare-
+protected torrent indexer) and scrapes the film titles straight out of the
+real HTML markup instead of relying on a feed that doesn't exist anymore.
+
+```mermaid
+sequenceDiagram
+    participant Script as Sync script
+    participant FS as FlareSolverr
+    participant LB as letterboxd.com
+    Script->>FS: POST /v1 {cmd: request.get, url: list page}
+    FS->>LB: real Chromium request
+    LB-->>FS: Cloudflare challenge, solved automatically
+    LB-->>FS: actual page HTML
+    FS-->>Script: {solution: {response: "<html>...">}}
+```
+
+Full writeup, including the exact markup pattern and why the obvious
+guesses (RSS, common poster attributes) didn't pan out: [docs/letterboxd-automation.md](docs/letterboxd-automation.md).
+
+### A VPN boundary that fails closed, not open
+
+Rather than a script that monitors the VPN and kills the torrent client if
+it drops — which leaks traffic for however long the monitor takes to
+notice — the torrent client container has **no network stack of its own**.
+It shares the VPN container's network namespace directly
+(`network_mode: service:gluetun`), so if the VPN container stops for any
+reason, the torrent client doesn't fall back to the host's real IP — it has
+no route to the internet at all.
+
+```mermaid
+flowchart TB
+    subgraph netns["Shared network namespace"]
+        VPN["VPN client container<br/>(WireGuard)"]
+        Torrent["Torrent client container<br/>network_mode: service:vpn"]
+    end
+    netns -->|only exit| Internet((Internet))
+    Torrent -.->|"no independent route —<br/>if VPN container stops,<br/>torrent client has zero network"| X[( )]
+```
+
+Full writeup, including what deliberately isn't tunneled and how to verify
+it: [docs/network-architecture.md](docs/network-architecture.md).
+
 ## Components
 
 | Layer | Tool | Role |
