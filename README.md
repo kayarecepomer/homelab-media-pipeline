@@ -119,6 +119,7 @@ it: [docs/network-architecture.md](docs/network-architecture.md).
 
 - [Network & Security Architecture](docs/network-architecture.md) — how the VPN boundary is actually enforced, and what is/isn't tunneled
 - [Letterboxd → Radarr Automation](docs/letterboxd-automation.md) — the scraping approach, why RSS doesn't work anymore, and how the Cloudflare challenge is solved
+- [Hardware](docs/hardware.md) — the machines this runs on, and what each one is (and isn't) used for
 - [`docker-compose.example.yml`](docker-compose.example.yml) — the full stack, with secrets/IPs replaced by placeholders
 - [`scripts/letterboxd_radarr_sync.py`](scripts/letterboxd_radarr_sync.py) — the sync script itself
 
