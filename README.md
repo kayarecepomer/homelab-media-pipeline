@@ -132,6 +132,10 @@ it: [docs/network-architecture.md](docs/network-architecture.md).
 
 Full walkthrough in [docs/letterboxd-automation.md](docs/letterboxd-automation.md).
 
+## Future plans
+
+- **Internal NVMe for media.** The server's M.2 slot sits underneath the 2.5" SATA drive bracket and accepts NVMe drives only (SATA M.2 drives aren't detected). An NVMe drive there would replace the USB-attached SSD used for media storage today, keeping the library on fast internal storage.
+
 ## Disclaimer
 
 This project is documentation of a personal infrastructure build for
