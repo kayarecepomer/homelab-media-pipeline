@@ -38,7 +38,9 @@ link entirely, and drive errors dropped to zero. See
 
 | Component | Spec |
 |---|---|
-| RAM | 20 GB DDR3 (2 × 8 GB + 1 × 4 GB) |
+| CPU | Intel Core i7-3770, 4 cores / 8 threads, 3.4 GHz (77 W class, hence the heat and fan noise) |
+| RAM | 20 GB DDR3-1600 (2 × 8 GB + 1 × 4 GB) |
+| Firmware | Dell BIOS A29 (the final release), classic BIOS boot rather than UEFI; the CMOS battery is flat and needs replacing to keep settings across power-offs |
 | GPU | Older AMD GPU (exact model not recorded) |
 | Storage | Free SATA ports and bays; receives the freed 256 GB SSD |
 | Noise / power | Loud (multiple fans) and a much higher idle draw than the Micro, so it is not run 24/7 |
