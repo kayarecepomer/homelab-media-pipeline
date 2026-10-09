@@ -110,3 +110,22 @@ template" feature only applies to files uploaded through Immich.
    version in the database dump** before restoring; then verify VPN exit
    address, hardlinks, port forwarding and every web UI.
 6. Pin the machine's address in netplan, and clear the stale SSH host key.
+
+## 9. GitHub's contribution graph only counts the account's no-reply email
+
+Commits pushed from this setup showed up in the commit list as "yours", yet
+left no green squares. GitHub credited them to the account (the author's
+avatar and username were right, and the gmail address was verified in the
+account's email settings), but the calendar ignored them. Commits made with
+the account's private `ID+username@users.noreply.github.com` address were
+counted every time, in every repo.
+
+**Fix:** set the git identity to the no-reply address
+(`git config --global user.email "ID+username@users.noreply.github.com"`),
+on every machine that commits. Commits that already exist with another email
+only count after their author email is rewritten (dates, messages and
+contents untouched) and the branch is force-pushed.
+
+**Checking it:** the commits API shows who a commit is credited to, but the
+GraphQL `contributionsCollection` query shows what the calendar actually
+counted. They can disagree, so compare the two.
