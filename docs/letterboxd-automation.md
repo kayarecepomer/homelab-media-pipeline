@@ -104,3 +104,19 @@ Every run spins up a real headless browser inside FlareSolverr, which is
 heavier than a plain HTTP request — 15–30 minutes is a reasonable interval
 for a personal watchlist; there's no need to poll more aggressively than
 that.
+
+## Following more than one list
+
+The script reads its settings from a config file, and which file (and which
+"already seen" state file) it uses can be overridden per run with environment
+variables. Give each list its own pair of files and its own cron line, offset
+by a few minutes so the two don't hit FlareSolverr's headless browser at the
+same moment:
+
+```cron
+*/15 * * * *        /usr/bin/python3 /path/to/letterboxd_radarr_sync.py >> /path/to/list1.log 2>&1
+7,22,37,52 * * * *  LB_RADARR_CONF=/path/to/list2.conf LB_RADARR_STATE=/path/to/list2.seen.json /usr/bin/python3 /path/to/letterboxd_radarr_sync.py >> /path/to/list2.log 2>&1
+```
+
+Each list keeps its own seen-state, so adding a film to one list never
+affects the other's history.

@@ -112,7 +112,8 @@ it: [docs/network-architecture.md](docs/network-architecture.md).
 | Subtitles | Bazarr | Automatic subtitle fetching |
 | Requests | Jellyseerr | Manual request intake for anyone else with access |
 | Playback | <img src="https://cdn.simpleicons.org/jellyfin/00A4DC" width="16" valign="middle" /> Jellyfin | Media server and client apps |
-| Photo library | Immich | Self-hosted photo/video backup with ML-based search and albums |
+| Photo library | Immich | Self-hosted photo/video backup with ML-based search and albums; the original files are indexed read-only as an external library |
+| Monitoring | Beszel, Uptime Kuma, Portainer, Cockpit | Resource graphs and alerts, "is it answering?" checks, container control, and the host's disks and drive health |
 | **List automation** | <img src="https://cdn.simpleicons.org/letterboxd/00E054" width="16" valign="middle" /> **custom script** (this repo) | Watches a public Letterboxd list, adds new films to Radarr |
 
 ## Docs
@@ -120,6 +121,8 @@ it: [docs/network-architecture.md](docs/network-architecture.md).
 - [Network & Security Architecture](docs/network-architecture.md) — how the VPN boundary is actually enforced, and what is/isn't tunneled
 - [Letterboxd → Radarr Automation](docs/letterboxd-automation.md) — the scraping approach, why RSS doesn't work anymore, and how the Cloudflare challenge is solved
 - [Hardware](docs/hardware.md) — the machines this runs on, and what each one is (and isn't) used for
+- [Lessons learned](docs/lessons-learned.md) — what broke while building and migrating this (hardlinks, USB storage, full disks, HDR transcoding, Immich), and the fixes
+- [`monitoring/compose.example.yml`](monitoring/compose.example.yml) — the optional monitoring stack, kept separate from the media stack
 - [`docker-compose.example.yml`](docker-compose.example.yml) — the full stack, with secrets/IPs replaced by placeholders
 - [`scripts/letterboxd_radarr_sync.py`](scripts/letterboxd_radarr_sync.py) — the sync script itself
 
@@ -134,7 +137,9 @@ Full walkthrough in [docs/letterboxd-automation.md](docs/letterboxd-automation.m
 
 ## Future plans
 
-- **Internal NVMe for media.** The server's M.2 slot sits underneath the 2.5" SATA drive bracket and accepts NVMe drives only (SATA M.2 drives aren't detected). An NVMe drive there would replace the USB-attached SSD used for media storage today, keeping the library on fast internal storage.
+- **Automated off-machine backups.** Photos and service configs currently get one-off verified backups to another machine. The plan is a nightly job: wake the spare, louder OptiPlex with Wake-on-LAN, sync the Immich library, database dumps and configs to it over SSH, then shut it down again, so it only makes noise for a few minutes a day.
+- **More capacity without USB.** The 500 GB SATA SSD is the only drive bay. The M.2 slot underneath it accepts **NVMe only**, so a cheap NVMe drive is the upgrade path for a larger media library without reintroducing USB storage.
+- **Index the rest of the photo archive.** Immich currently indexes about 5,500 original photos and videos; the remaining archive from older drives still needs to be reviewed and added.
 
 ## Disclaimer
 

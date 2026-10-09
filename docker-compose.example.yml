@@ -1,5 +1,6 @@
-# Sanitized template — copy to compose.yml and fill in your own values.
-# Never commit the real compose.yml: it will contain your VPN private key.
+# Sanitized template — copy to compose.yml, copy .env.example to .env, and fill in
+# your own values. Never commit the real compose.yml or .env: they contain your
+# VPN private key.
 
 services:
   gluetun:
@@ -14,6 +15,9 @@ services:
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESS}          # e.g. 10.x.x.x/32
       - SERVER_COUNTRIES=${VPN_COUNTRY}                   # e.g. United States
       - VPN_PORT_FORWARDING=on
+      # The forwarded port changes on every reconnect; push it into qBittorrent's
+      # API each time (needs "bypass authentication for clients on localhost").
+      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8080/api/v2/app/setPreferences'
       - FIREWALL_OUTBOUND_SUBNETS=${LAN_SUBNET},${TAILSCALE_SUBNET}
     ports:
       - "8080:8080"
@@ -31,11 +35,13 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Etc/UTC
+      - TZ=${TZ}
     volumes:
       - ./qbittorrent:/config
-      - ${MEDIA_ROOT}/torrents:/data/torrents
-      - ${MEDIA_ROOT}/media:/data/media
+      # ONE mount for torrents and media. Two separate mounts (even on the same
+      # disk) make hardlink imports silently fall back to copies — see
+      # docs/lessons-learned.md.
+      - ${MEDIA_ROOT}:/data
     restart: unless-stopped
 
   prowlarr:
@@ -49,6 +55,10 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     ports: ["8989:8989"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
     volumes:
       - ./sonarr:/config
       - ${MEDIA_ROOT}:/data
@@ -58,6 +68,10 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     ports: ["7878:7878"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
     volumes:
       - ./radarr:/config
       - ${MEDIA_ROOT}:/data
@@ -67,6 +81,10 @@ services:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
     ports: ["6767:6767"]
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
     volumes:
       - ./bazarr:/config
       - ${MEDIA_ROOT}:/data
@@ -88,12 +106,20 @@ services:
     restart: unless-stopped
 
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
-    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      # OpenCL runtime so HDR / Dolby Vision tone mapping works on Intel iGPUs
+      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
     volumes:
       - ./jellyfin:/config
       - ${MEDIA_ROOT}/media:/data/media
+    devices:
+      - /dev/dri:/dev/dri   # Intel Quick Sync / VAAPI hardware transcoding
+    ports: ["8096:8096"]
     restart: unless-stopped
 
   deunhealth:

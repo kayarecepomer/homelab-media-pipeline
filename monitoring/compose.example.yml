@@ -1,0 +1,53 @@
+# Optional monitoring stack, kept separate from the media stack so it can be
+# started, stopped and upgraded on its own. Everything here should be reachable
+# only from the LAN / Tailscale — Portainer and the Beszel agent can reach the
+# Docker socket, which is effectively root on the host.
+#
+# Host-level view (disks, SMART health, logs, services, terminal) comes from
+# Cockpit, installed with apt rather than Docker:
+#   sudo apt install cockpit cockpit-storaged && sudo systemctl enable --now cockpit.socket
+#   -> https://<server>:9090
+
+services:
+  # Graphs and per-container stats. Create the admin account in the web UI first,
+  # then use "Add System": it shows the hub's public key to paste in as KEY below.
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    restart: unless-stopped
+    ports: ["8090:8090"]
+    volumes:
+      - ./beszel_data:/beszel_data
+
+  beszel-agent:
+    image: henrygd/beszel-agent:latest
+    container_name: beszel-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./beszel_agent_data:/var/lib/beszel-agent
+    environment:
+      KEY: "ssh-ed25519 PASTE-THE-HUB-PUBLIC-KEY-HERE"
+
+  # "Is the service actually answering?" checks with alerts. Use a maintained
+  # tag (:2) — the :latest tag still points at the unmaintained v1.
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports: ["3001:3001"]
+    volumes:
+      - ./uptime-kuma-data:/app/data
+
+  # Container status, logs and restart buttons for every container, however it
+  # was started. Create the admin account promptly after first start; recent
+  # versions also require a one-time setup token printed in `docker logs portainer`.
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    ports: ["9000:9000", "9443:9443"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./portainer:/data

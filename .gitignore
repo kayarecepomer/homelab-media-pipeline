@@ -12,3 +12,8 @@ radarr/
 bazarr/
 jellyseerr/
 jellyfin/
+
+beszel_data/
+beszel_agent_data/
+uptime-kuma-data/
+portainer/
